@@ -7,22 +7,22 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Wise Monky | Dashboard</title>
     <link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
-    <link rel="stylesheet" href="/css/login.css" />
+    <link rel="stylesheet" href="./css/style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
         rel="stylesheet" />
-    <link rel="stylesheet" href="./css/dashboard.css">
 </head>
 
-<body>
+<body class="page-dashboard">
     <main class="dashboard-shell">
         <section class="dashboard-header">
             <div class="brand">
                 <img src="/img/Logo.png" alt="Wise Monky logo" />
                 <div>
-                    <h1>A Bölcs Majom </h1>
+                    <h1 class="dashboard-title">A Bölcs Majom</h1>
+                    <p class="dashboard-subtitle">Az egységes közös CSS azért hasznos, mert ugyanazzal a vizuális rendszerrel tudod kezelni az összes oldalt.</p>
                 </div>
             </div>
 
@@ -36,11 +36,12 @@
             <div class="card-head">
                 <div>
                     <h2>Idézet adatbázis</h2>
+                    <p>Itt jelennek meg a mintaidézetek a hozzájuk tartozó szerkesztési és törlési műveletekkel.</p>
                 </div>
             </div>
 
             <div class="table-wrap">
-                <table>
+                <table class="dashboard-table">
                     <thead>
                         <tr>
                             <th>Azonosito</th>
