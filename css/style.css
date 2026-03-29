@@ -32,6 +32,7 @@ body {
 
 .text-bubble {
   background-color: cadetblue;
+  font-family: "Roboto", sans-serif;
   width: 20rem;
   height: 25rem;
   padding-top: 4rem;
@@ -82,6 +83,7 @@ body {
   padding: 45px 18px;
   max-width: 370px;
   position: relative;
+  font-family: "Roboto", sans-serif;
 }
 
 .circular::before,
@@ -115,17 +117,4 @@ body {
 #circular-JS.hide {
   visibility: hidden;
   opacity: 0;
-}
-
-
-.monkeybtn {
-  width: 220px;
-  height: 60px;
-  font-size: 22px;
-  border-radius: 25px;
-  border: none;
-  background-color: #1A1A1A;
-  font-weight: bold;
-  cursor: pointer;
-  color: white;
 }

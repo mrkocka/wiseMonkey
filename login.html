@@ -1,11 +1,53 @@
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/login.css">
+    <title>Wise Monky | Login</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <style>
+
+    </style>
 </head>
+
 <body>
-    
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="logo-box">
+                <!-- Saját logóhoz cseréld le az src értékét -->
+                <!-- <img src="logo.png" alt="Logó"> -->
+                <div class="logo-fallback">
+                    <img src="/img/Logo.png" alt="majom logo">
+                </div>
+            </div>
+
+            <form>
+                <div class="field">
+                    <label for="username">Felhasználónév</label>
+                    <input type="text" id="username" name="username" placeholder="Pl. peter.admin" required>
+                </div>
+
+                <div class="field">
+                    <label for="password">Jelszó</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+
+                <div class="options">
+                    <label class="checkbox">
+                        <input type="checkbox" name="remember">
+                        <span>Emlékezzen rám</span>
+                    </label>
+
+                    <a class="forgot" href="#">Elfelejtett jelszó?</a>
+                </div>
+
+                <button type="submit" class="login-btn">Belépés</button>
+            </form>
+
+        </div>
+    </div>
 </body>
+
 </html>
