@@ -3,31 +3,129 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+.ubuntu-mono-regular {
+  font-family: "Ubuntu Mono", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.ubuntu-mono-bold {
+  font-family: "Ubuntu Mono", monospace;
+  font-weight: 700;
+  font-style: normal;
+}
+
 body {
   background-color: #e14951;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
+  gap: 5rem;
 }
 
-.monky {
+.monkey {
+  width: 100%;
+}
+
+.text-bubble {
+  background-color: cadetblue;
+  width: 20rem;
+  height: 25rem;
+  padding-top: 4rem;
+  display: flex;
+}
+
+.bubble-img {
   width: 100%;
 }
 
 .box {
-  width: 30rem;
-  padding: 0.5rem;
+  animation: float 2s infinite alternate-reverse ease-in-out;
   position: relative;
   bottom: 0;
-  animation: float 2s infinite alternate-reverse ease-in-out;
+  width: 25rem;
+  /*Tablett nézetnél csak 20rem */
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3.2rem;
+  background-color: #e14951;
+  /*   background-color: rgba(0, 0, 255, 0.589); */
 }
 
 @keyframes float {
   0% {
     bottom: 0px;
   }
+
   100% {
     bottom: 40px;
   }
+}
+
+/*----------------text bubble------------------------*/
+.circular,
+.circular::before,
+.circular::after {
+  background: whitesmoke;
+  border-radius: 50%;
+}
+
+.circular {
+  /* nagy buborék */
+  font-size: 1.1em;
+  color: black;
+  text-align: center;
+  padding: 45px 18px;
+  max-width: 370px;
+  position: relative;
+}
+
+.circular::before,
+.circular::after {
+  content: "";
+  position: absolute;
+}
+
+/*Kisebb buborék*/
+.circular::before {
+  width: 20px;
+  padding: 20px;
+  right: 100px;
+  /*140*/
+  bottom: -50px;
+  /*-50*/
+}
+
+/*legkisebb buborék*/
+.circular::after {
+  width: 10px;
+  padding: 10px;
+  right: 100px;
+  bottom: -80px;
+}
+
+#circular-JS {
+  transition: all 1s;
+}
+
+#circular-JS.hide {
+  visibility: hidden;
+  opacity: 0;
+}
+
+
+.monkeybtn {
+  width: 220px;
+  height: 60px;
+  font-size: 22px;
+  border-radius: 25px;
+  border: none;
+  background-color: #1A1A1A;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
 }
