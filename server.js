@@ -2,11 +2,11 @@ const express = require("express");
 const crypto = require("crypto");
 const path = require("path");
 const {
-  ensureAdminUser,
-  ensureDefaultQuotes,
+  createQuote,
   findUserByCredentials,
   getAllQuotes,
   getRandomQuote,
+  isDatabaseAvailable,
   userExists,
 } = require("./auth-db");
 
@@ -15,9 +15,6 @@ const PORT = process.env.PORT || 3000;
 const publicDir = __dirname;
 const sessionSecret = process.env.SESSION_SECRET || "wise-monkey-dev-secret";
 const authCookieName = "wise_monkey_auth";
-
-ensureAdminUser();
-ensureDefaultQuotes();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -69,6 +66,10 @@ function isDashboardAuthorized(req) {
 }
 
 function requireDashboardAuth(req, res, next) {
+  if (!isDatabaseAvailable()) {
+    return res.redirect("/login?error=db");
+  }
+
   if (isDashboardAuthorized(req)) {
     return next();
   }
@@ -77,6 +78,10 @@ function requireDashboardAuth(req, res, next) {
 }
 
 function requireApiAuth(req, res, next) {
+  if (!isDatabaseAvailable()) {
+    return res.status(503).json({ error: "Database unavailable" });
+  }
+
   if (isDashboardAuthorized(req)) {
     return next();
   }
@@ -98,6 +103,10 @@ app.get(["/login", "/login.html", "/banan"], (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  if (!isDatabaseAvailable()) {
+    return res.redirect("/login?error=db");
+  }
+
   const user = findUserByCredentials(req.body.username, req.body.password);
 
   if (!user) {
@@ -116,7 +125,27 @@ app.get("/api/quotes", requireApiAuth, (req, res) => {
   res.json({ quotes: getAllQuotes() });
 });
 
+app.post("/api/quotes", requireApiAuth, (req, res) => {
+  const quoteText = req.body.quoteText?.trim();
+  const author = req.body.author?.trim();
+
+  if (!quoteText || !author) {
+    return res.status(400).json({ error: "Quote text and author are required" });
+  }
+
+  if (quoteText.length > 500 || author.length > 120) {
+    return res.status(400).json({ error: "Input is too long" });
+  }
+
+  createQuote(quoteText, author);
+  return res.status(201).json({ success: true });
+});
+
 app.get("/api/random-quote", (req, res) => {
+  if (!isDatabaseAvailable()) {
+    return res.status(503).json({ error: "Database unavailable" });
+  }
+
   const quote = getRandomQuote();
 
   if (!quote) {

@@ -18,5 +18,5 @@ if (userExists(username)) {
   process.exit(1);
 }
 
-createUser(username, password);
+createUser(username, password, { createIfMissing: true });
 console.log(`A(z) "${username}" felhasznalo letrejott az adatbazisban.`);

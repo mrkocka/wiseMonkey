@@ -53,8 +53,16 @@
         </div>
     </div>
     <script>
-        if (new URLSearchParams(window.location.search).has("error")) {
-            document.getElementById("login-error").classList.add("is-visible");
+        const params = new URLSearchParams(window.location.search);
+        const errorType = params.get("error");
+        const errorBox = document.getElementById("login-error");
+
+        if (errorType === "db") {
+            errorBox.textContent = "Adatbazis hiba miatt a belepes jelenleg nem elerheto.";
+            errorBox.classList.add("is-visible");
+        } else if (errorType) {
+            errorBox.textContent = "Hibas felhasznalonev vagy jelszo. Kerlek probald ujra.";
+            errorBox.classList.add("is-visible");
         }
     </script>
 </body>

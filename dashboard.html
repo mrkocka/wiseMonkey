@@ -27,7 +27,7 @@
             </div>
 
             <div class="header-actions">
-                <a class="button button-primary" href="#">Uj idezet feltoltese</a>
+                <button id="open-quote-modal" class="button button-primary" type="button">Uj idezet feltoltese</button>
                 <a class="button button-secondary" href="/logout">Kijelentkezes</a>
             </div>
         </section>
@@ -58,6 +58,36 @@
             </div>
         </section>
     </main>
+    <div id="quote-modal" class="modal-overlay is-hidden" aria-hidden="true">
+        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title">
+            <div class="modal-head">
+                <div>
+                    <h2 id="quote-modal-title">Uj idezet feltoltese</h2>
+                    <p>Toltsd ki az idezet szoveget es a szerzo nevet, hogy az adatbazisba keruljon.</p>
+                </div>
+                <button id="close-quote-modal" class="modal-close" type="button" aria-label="Ablak bezarasa">×</button>
+            </div>
+
+            <form id="quote-form" class="modal-form">
+                <div class="field">
+                    <label for="quote-text-input">Idezet</label>
+                    <textarea id="quote-text-input" name="quoteText" rows="5" maxlength="500" required></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="quote-author-input">Szerzo</label>
+                    <input id="quote-author-input" name="author" type="text" maxlength="120" required />
+                </div>
+
+                <p id="quote-form-message" class="form-message" aria-live="polite"></p>
+
+                <div class="modal-actions">
+                    <button class="button button-primary" id="submit-quote-button" type="submit">Idezet mentese</button>
+                    <button class="button button-secondary" type="button" id="cancel-quote-modal">Megse</button>
+                </div>
+            </form>
+        </section>
+    </div>
     <script src="./js/dashboard.js"></script>
 </body>
 

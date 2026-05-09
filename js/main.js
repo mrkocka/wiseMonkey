@@ -31,6 +31,10 @@ async function loadRandomQuote() {
       },
     });
 
+    if (response.status === 503) {
+      throw new Error("Database unavailable");
+    }
+
     if (!response.ok) {
       throw new Error(`Unexpected status: ${response.status}`);
     }
@@ -39,7 +43,11 @@ async function loadRandomQuote() {
     const nextText = `"${data.quote.quoteText}"`;
     await updateQuoteText(nextText);
   } catch (error) {
-    await updateQuoteText("Nem sikerult uj idezetet betolteni. Probald meg ujra.");
+    const message =
+      error.message === "Database unavailable"
+        ? "Az idezetek adatbazisa jelenleg nem elerheto."
+        : "Nem sikerult uj idezetet betolteni. Probald meg ujra.";
+    await updateQuoteText(message);
     console.error(error);
   } finally {
     button.disabled = false;

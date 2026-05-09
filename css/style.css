@@ -372,6 +372,36 @@ img {
   overflow: hidden;
 }
 
+.page-dashboard .field {
+  display: grid;
+  gap: 8px;
+}
+
+.page-dashboard label {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.page-dashboard input,
+.page-dashboard textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #d9d9d9;
+  background: var(--input-bg);
+  font-size: 1rem;
+  font-family: "Ubuntu", sans-serif;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  resize: vertical;
+}
+
+.page-dashboard input:focus,
+.page-dashboard textarea:focus {
+  border-color: var(--accent-shadow);
+  box-shadow: 0 0 0 4px rgba(255, 209, 102, 0.28);
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -409,6 +439,79 @@ img {
   text-align: center;
   color: var(--muted);
   font-style: italic;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 31, 31, 0.42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 20;
+}
+
+.modal-overlay.is-hidden {
+  display: none;
+}
+
+.modal-card {
+  width: min(100%, 640px);
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 26px;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.modal-head h2 {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+}
+
+.modal-head p {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.modal-close {
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-form {
+  display: grid;
+  gap: 16px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.form-message {
+  min-height: 1.4em;
+  color: var(--danger-text);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.form-message.is-success {
+  color: #2d7a46;
 }
 
 .page-error {
@@ -481,12 +584,14 @@ img {
   }
 
   .header-actions,
-  .row-actions {
+  .row-actions,
+  .modal-actions {
     width: 100%;
   }
 
   .header-actions .button,
   .row-actions .button,
+  .modal-actions .button,
   .page-error .button,
   .page-login .login-btn {
     width: 100%;

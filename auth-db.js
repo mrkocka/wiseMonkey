@@ -4,29 +4,47 @@ const path = require("path");
 const Database = require("better-sqlite3");
 
 const dbFile = process.env.DB_FILE || path.join(__dirname, "data", "wise-monkey.sqlite");
+let cachedDb = null;
 
-fs.mkdirSync(path.dirname(dbFile), { recursive: true });
+function initializeSchema(db) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      password_salt TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
 
-const db = new Database(dbFile);
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS quotes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      quote_text TEXT NOT NULL,
+      author TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+}
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    password_salt TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-`);
+function getDatabase({ createIfMissing = false } = {}) {
+  if (cachedDb) {
+    return cachedDb;
+  }
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS quotes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    quote_text TEXT NOT NULL,
-    author TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-`);
+  if (!createIfMissing && !fs.existsSync(dbFile)) {
+    return null;
+  }
+
+  fs.mkdirSync(path.dirname(dbFile), { recursive: true });
+  cachedDb = new Database(dbFile);
+  initializeSchema(cachedDb);
+  return cachedDb;
+}
+
+function isDatabaseAvailable() {
+  return Boolean(getDatabase());
+}
 
 function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
   return {
@@ -43,7 +61,13 @@ function verifyPassword(password, user) {
   return storedHash.length === submittedHash.length && crypto.timingSafeEqual(storedHash, submittedHash);
 }
 
-function createUser(username, password) {
+function createUser(username, password, options = {}) {
+  const db = getDatabase({ createIfMissing: options.createIfMissing === true });
+
+  if (!db) {
+    throw new Error("Database unavailable");
+  }
+
   const { hash, salt } = hashPassword(password);
 
   db.prepare(`
@@ -52,66 +76,26 @@ function createUser(username, password) {
   `).run(username, hash, salt);
 }
 
-function createQuote(quoteText, author) {
+function createQuote(quoteText, author, options = {}) {
+  const db = getDatabase({ createIfMissing: options.createIfMissing === true });
+
+  if (!db) {
+    throw new Error("Database unavailable");
+  }
+
   db.prepare(`
     INSERT INTO quotes (quote_text, author)
     VALUES (?, ?)
   `).run(quoteText, author);
 }
 
-function ensureAdminUser() {
-  const userCount = db.prepare("SELECT COUNT(*) AS count FROM users").get().count;
-
-  if (userCount > 0) {
-    return;
-  }
-
-  const username = process.env.ADMIN_USERNAME || "admin";
-  const generatedPassword = crypto.randomBytes(12).toString("base64url");
-  const password = process.env.DASHBOARD_PASSWORD || generatedPassword;
-
-  createUser(username, password);
-
-  if (!process.env.DASHBOARD_PASSWORD) {
-    console.log("Created default admin user.");
-    console.log(`Username: ${username}`);
-    console.log(`Temporary password: ${generatedPassword}`);
-    console.log("Set DASHBOARD_PASSWORD before first run to choose your own password.");
-  }
-}
-
-function ensureDefaultQuotes() {
-  const quoteCount = db.prepare("SELECT COUNT(*) AS count FROM quotes").get().count;
-
-  if (quoteCount > 0) {
-    return;
-  }
-
-  const defaultQuotes = [
-    {
-      quoteText: "Ha a majom ad tanacsot, legalabb nevess rajta egyet, mielott megfogadod.",
-      author: "Wise Monky",
-    },
-    {
-      quoteText: "Nem minden bolcsnek hangzo mondat erdemli meg, hogy eletfilozofia legyen belole.",
-      author: "Wise Monky",
-    },
-    {
-      quoteText: "A jo idezet rovid, emlekezetes, es nem veszik el a sajat okoskodasaban.",
-      author: "Admin",
-    },
-    {
-      quoteText: "Ha mar 404-et kaptal, legalabb kapj melle egy jo majmos megjegyzest is.",
-      author: "Wise Monky",
-    },
-  ];
-
-  for (const quote of defaultQuotes) {
-    createQuote(quote.quoteText, quote.author);
-  }
-}
-
 function findUserByCredentials(username, password) {
+  const db = getDatabase();
+
+  if (!db) {
+    return null;
+  }
+
   const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
 
   if (!user || !verifyPassword(password, user)) {
@@ -122,11 +106,23 @@ function findUserByCredentials(username, password) {
 }
 
 function userExists(username) {
+  const db = getDatabase();
+
+  if (!db) {
+    return false;
+  }
+
   const user = db.prepare("SELECT id FROM users WHERE username = ?").get(username);
   return Boolean(user);
 }
 
 function getAllQuotes() {
+  const db = getDatabase();
+
+  if (!db) {
+    return [];
+  }
+
   return db.prepare(`
     SELECT id, quote_text AS quoteText, author, created_at AS createdAt
     FROM quotes
@@ -135,6 +131,12 @@ function getAllQuotes() {
 }
 
 function getRandomQuote() {
+  const db = getDatabase();
+
+  if (!db) {
+    return null;
+  }
+
   return db.prepare(`
     SELECT id, quote_text AS quoteText, author, created_at AS createdAt
     FROM quotes
@@ -144,12 +146,11 @@ function getRandomQuote() {
 }
 
 module.exports = {
-  createUser,
   createQuote,
-  ensureDefaultQuotes,
-  ensureAdminUser,
+  createUser,
   findUserByCredentials,
   getAllQuotes,
   getRandomQuote,
+  isDatabaseAvailable,
   userExists,
 };
