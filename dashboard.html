@@ -22,21 +22,20 @@
                 <img src="/img/Logo.png" alt="Wise Monky logo" />
                 <div>
                     <h1 class="dashboard-title">A Bölcs Majom</h1>
-                    <p class="dashboard-subtitle">Az egységes közös CSS azért hasznos, mert ugyanazzal a vizuális rendszerrel tudod kezelni az összes oldalt.</p>
+                    <p class="dashboard-subtitle"></p>
                 </div>
             </div>
 
             <div class="header-actions">
                 <a class="button button-primary" href="#">Uj idezet feltoltese</a>
-                <a class="button button-secondary" href="/login.html">Kijelentkezes</a>
+                <a class="button button-secondary" href="/logout">Kijelentkezes</a>
             </div>
         </section>
 
         <section class="dashboard-card">
             <div class="card-head">
                 <div>
-                    <h2>Idézet adatbázis</h2>
-                    <p>Itt jelennek meg a mintaidézetek a hozzájuk tartozó szerkesztési és törlési műveletekkel.</p>
+                    <h2>Idézet Gyüjtemény</h2>
                 </div>
             </div>
 
@@ -50,64 +49,16 @@
                             <th>Muveletek</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="quotes-table-body">
                         <tr>
-                            <td>#001</td>
-                            <td class="quote-text">"Ha a majom ad tanacsot, legalabb nevess rajta egyet, mielott
-                                megfogadod."</td>
-                            <td>Wise Monky</td>
-                            <td>
-                                <div class="row-actions">
-                                    <button class="button button-primary button-small"
-                                        type="button">Szerkesztes</button>
-                                    <button class="button button-small button-delete" type="button">Torles</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#002</td>
-                            <td class="quote-text">"Nem minden bolcsnek hangzo mondat erdemli meg, hogy eletfilozofia
-                                legyen belole."</td>
-                            <td>Wise Monky</td>
-                            <td>
-                                <div class="row-actions">
-                                    <button class="button button-primary button-small"
-                                        type="button">Szerkesztes</button>
-                                    <button class="button button-small button-delete" type="button">Torles</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#003</td>
-                            <td class="quote-text">"A jo idezet rovid, emlekezetes, es nem veszik el a sajat
-                                okoskodasaban."</td>
-                            <td>Admin</td>
-                            <td>
-                                <div class="row-actions">
-                                    <button class="button button-primary button-small"
-                                        type="button">Szerkesztes</button>
-                                    <button class="button button-small button-delete" type="button">Torles</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#004</td>
-                            <td class="quote-text">"Ha mar 404-et kaptal, legalabb kapj melle egy jo majmos megjegyzest
-                                is."</td>
-                            <td>Wise Monky</td>
-                            <td>
-                                <div class="row-actions">
-                                    <button class="button button-primary button-small"
-                                        type="button">Szerkesztes</button>
-                                    <button class="button button-small button-delete" type="button">Torles</button>
-                                </div>
-                            </td>
+                            <td colspan="4" class="table-message">Az idezetek betoltese folyamatban van...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
+    <script src="./js/dashboard.js"></script>
 </body>
 
 </html>

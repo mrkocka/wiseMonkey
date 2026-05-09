@@ -25,10 +25,10 @@
                 </div>
             </div>
 
-            <form>
+            <form action="/login" method="post">
                 <div class="field">
                     <label for="username">Felhasználónév</label>
-                    <input type="text" id="username" name="username" placeholder="Pl. peter.admin" required>
+                    <input type="text" id="username" name="username" placeholder="Pl. admin" required>
                 </div>
 
                 <div class="field">
@@ -45,11 +45,18 @@
                     <a class="forgot" href="#">Elfelejtett jelszó?</a>
                 </div>
 
+                <p class="login-error" id="login-error">Hibás jelszó. Kérlek próbáld újra.</p>
+
                 <button type="submit" class="login-btn">Belépés</button>
             </form>
 
         </div>
     </div>
+    <script>
+        if (new URLSearchParams(window.location.search).has("error")) {
+            document.getElementById("login-error").classList.add("is-visible");
+        }
+    </script>
 </body>
 
 </html>

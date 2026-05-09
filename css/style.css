@@ -67,6 +67,12 @@ img {
   box-shadow: 0 3px 0 var(--accent-shadow);
 }
 
+.button:disabled,
+.login-btn:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
+
 .button-secondary {
   background: #ffffff;
   color: var(--text);
@@ -266,6 +272,18 @@ img {
   text-decoration: underline;
 }
 
+.login-error {
+  display: none;
+  color: var(--danger-text);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.login-error.is-visible {
+  display: block;
+}
+
 .page-dashboard {
   display: flex;
   justify-content: center;
@@ -385,6 +403,12 @@ img {
 .quote-text {
   max-width: 34rem;
   line-height: 1.6;
+}
+
+.table-message {
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
 }
 
 .page-error {
