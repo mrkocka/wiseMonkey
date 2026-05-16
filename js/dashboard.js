@@ -4,10 +4,43 @@ const openModalButton = document.getElementById("open-quote-modal");
 const closeModalButton = document.getElementById("close-quote-modal");
 const cancelModalButton = document.getElementById("cancel-quote-modal");
 const quoteForm = document.getElementById("quote-form");
+const quoteIdInput = document.getElementById("quote-id-input");
 const quoteTextInput = document.getElementById("quote-text-input");
 const quoteAuthorInput = document.getElementById("quote-author-input");
 const quoteFormMessage = document.getElementById("quote-form-message");
 const submitQuoteButton = document.getElementById("submit-quote-button");
+const modalTitle = document.getElementById("quote-modal-title");
+const modalDescription = document.querySelector(".modal-head p");
+const deleteModal = document.getElementById("delete-modal");
+const closeDeleteModalButton = document.getElementById("close-delete-modal");
+const cancelDeleteModalButton = document.getElementById("cancel-delete-button");
+const confirmDeleteButton = document.getElementById("confirm-delete-button");
+const deleteModalQuotePreview = document.getElementById("delete-modal-quote-preview");
+const deleteFormMessage = document.getElementById("delete-form-message");
+
+let pendingDeleteQuote = null;
+
+function isDatabaseError(response) {
+  return response.status === 503;
+}
+
+function isEditMode() {
+  return Boolean(quoteIdInput.value);
+}
+
+function setFormMessage(message, isSuccess = false) {
+  quoteFormMessage.textContent = message;
+  quoteFormMessage.classList.toggle("is-success", isSuccess);
+}
+
+function resetModalToCreateMode() {
+  quoteForm.reset();
+  quoteIdInput.value = "";
+  modalTitle.textContent = "Uj idezet feltoltese";
+  modalDescription.textContent = "Toltsd ki az idezet szoveget es a szerzo nevet, hogy az adatbazisba keruljon.";
+  submitQuoteButton.textContent = "Idezet mentese";
+  setFormMessage("");
+}
 
 function openModal() {
   modal.classList.remove("is-hidden");
@@ -18,32 +51,42 @@ function openModal() {
 function closeModal() {
   modal.classList.add("is-hidden");
   modal.setAttribute("aria-hidden", "true");
-  quoteForm.reset();
-  quoteFormMessage.textContent = "";
-  quoteFormMessage.classList.remove("is-success");
+  resetModalToCreateMode();
 }
 
-function setFormMessage(message, isSuccess = false) {
-  quoteFormMessage.textContent = message;
-  quoteFormMessage.classList.toggle("is-success", isSuccess);
+function openDeleteModal(quote) {
+  pendingDeleteQuote = quote;
+  deleteModalQuotePreview.textContent = `"${quote.quoteText}"`;
+  deleteFormMessage.textContent = "";
+  deleteFormMessage.classList.remove("is-success");
+  deleteModal.classList.remove("is-hidden");
+  deleteModal.setAttribute("aria-hidden", "false");
+  confirmDeleteButton.focus();
 }
 
-function createActionButtons() {
-  const actions = document.createElement("div");
-  actions.className = "row-actions";
+function closeDeleteModal() {
+  pendingDeleteQuote = null;
+  deleteModal.classList.add("is-hidden");
+  deleteModal.setAttribute("aria-hidden", "true");
+  deleteModalQuotePreview.textContent = "";
+  deleteFormMessage.textContent = "";
+  deleteFormMessage.classList.remove("is-success");
+}
 
-  const editButton = document.createElement("button");
-  editButton.type = "button";
-  editButton.className = "button button-primary button-small";
-  editButton.textContent = "Szerkesztes";
+function openCreateModal() {
+  resetModalToCreateMode();
+  openModal();
+}
 
-  const deleteButton = document.createElement("button");
-  deleteButton.type = "button";
-  deleteButton.className = "button button-small button-delete";
-  deleteButton.textContent = "Torles";
-
-  actions.append(editButton, deleteButton);
-  return actions;
+function openEditModal(quote) {
+  quoteIdInput.value = String(quote.id);
+  quoteTextInput.value = quote.quoteText;
+  quoteAuthorInput.value = quote.author;
+  modalTitle.textContent = "Idezet szerkesztese";
+  modalDescription.textContent = "Itt tudod modositani a kivalasztott idezet szoveget es szerzojet.";
+  submitQuoteButton.textContent = "Modositas mentese";
+  setFormMessage("");
+  openModal();
 }
 
 function renderMessage(message) {
@@ -59,8 +102,28 @@ function renderMessage(message) {
   tableBody.appendChild(row);
 }
 
-function isDatabaseError(response) {
-  return response.status === 503;
+function createActionButtons(quote) {
+  const actions = document.createElement("div");
+  actions.className = "row-actions";
+
+  const editButton = document.createElement("button");
+  editButton.type = "button";
+  editButton.className = "button button-primary button-small";
+  editButton.textContent = "Szerkesztes";
+  editButton.addEventListener("click", () => {
+    openEditModal(quote);
+  });
+
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.className = "button button-small button-delete";
+  deleteButton.textContent = "Torles";
+  deleteButton.addEventListener("click", () => {
+    openDeleteModal(quote);
+  });
+
+  actions.append(editButton, deleteButton);
+  return actions;
 }
 
 function renderQuotes(quotes) {
@@ -85,7 +148,7 @@ function renderQuotes(quotes) {
     authorCell.textContent = quote.author;
 
     const actionsCell = document.createElement("td");
-    actionsCell.appendChild(createActionButtons());
+    actionsCell.appendChild(createActionButtons(quote));
 
     row.append(idCell, quoteCell, authorCell, actionsCell);
     tableBody.appendChild(row);
@@ -120,24 +183,26 @@ async function loadQuotes() {
   }
 }
 
-async function handleQuoteCreate(event) {
+async function handleQuoteCreateOrUpdate(event) {
   event.preventDefault();
 
   const formData = new FormData(quoteForm);
   const quoteText = formData.get("quoteText")?.toString().trim() || "";
   const author = formData.get("author")?.toString().trim() || "";
+  const quoteId = quoteIdInput.value;
 
   if (!quoteText || !author) {
     setFormMessage("Az idezet es a szerzo mezot is ki kell tolteni.");
     return;
   }
 
+  const editing = isEditMode();
   submitQuoteButton.disabled = true;
-  setFormMessage("Idezet mentese folyamatban...");
+  setFormMessage(editing ? "Idezet modositasa folyamatban..." : "Idezet mentese folyamatban...");
 
   try {
-    const response = await fetch("/api/quotes", {
-      method: "POST",
+    const response = await fetch(editing ? `/api/quotes/${quoteId}` : "/api/quotes", {
+      method: editing ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -154,7 +219,13 @@ async function handleQuoteCreate(event) {
       throw new Error(data.error || `Unexpected status: ${response.status}`);
     }
 
-    setFormMessage("Az uj idezet sikeresen bekerult az adatbazisba.", true);
+    setFormMessage(
+      editing
+        ? "Az idezet modositasat elmentettuk."
+        : "Az uj idezet sikeresen bekerult az adatbazisba.",
+      true,
+    );
+
     await loadQuotes();
     window.setTimeout(() => {
       closeModal();
@@ -162,8 +233,10 @@ async function handleQuoteCreate(event) {
   } catch (error) {
     const message =
       error.message === "Database unavailable"
-        ? "Adatbazis hiba miatt most nem lehet uj idezetet menteni."
-        : "Nem sikerult elmenteni az uj idezetet.";
+        ? "Adatbazis hiba miatt most nem lehet menteni."
+        : editing
+          ? "Nem sikerult modositani az idezetet."
+          : "Nem sikerult elmenteni az uj idezetet.";
     setFormMessage(message);
     console.error(error);
   } finally {
@@ -171,18 +244,70 @@ async function handleQuoteCreate(event) {
   }
 }
 
-openModalButton.addEventListener("click", openModal);
+async function handleQuoteDelete() {
+  if (!pendingDeleteQuote) {
+    return;
+  }
+
+  const quote = pendingDeleteQuote;
+  confirmDeleteButton.disabled = true;
+  deleteFormMessage.textContent = "";
+
+  try {
+    const response = await fetch(`/api/quotes/${quote.id}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (isDatabaseError(response)) {
+      throw new Error("Database unavailable");
+    }
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.error || `Unexpected status: ${response.status}`);
+    }
+
+    await loadQuotes();
+    closeDeleteModal();
+  } catch (error) {
+    const message =
+      error.message === "Database unavailable"
+        ? "Adatbazis hiba miatt most nem lehet torolni az idezetet."
+        : "Nem sikerult torolni az idezetet.";
+    deleteFormMessage.textContent = message;
+    console.error(error);
+  } finally {
+    confirmDeleteButton.disabled = false;
+  }
+}
+
+openModalButton.addEventListener("click", openCreateModal);
 closeModalButton.addEventListener("click", closeModal);
 cancelModalButton.addEventListener("click", closeModal);
+closeDeleteModalButton.addEventListener("click", closeDeleteModal);
+cancelDeleteModalButton.addEventListener("click", closeDeleteModal);
+confirmDeleteButton.addEventListener("click", handleQuoteDelete);
 modal.addEventListener("click", (event) => {
   if (event.target === modal) {
     closeModal();
   }
 });
-quoteForm.addEventListener("submit", handleQuoteCreate);
+deleteModal.addEventListener("click", (event) => {
+  if (event.target === deleteModal) {
+    closeDeleteModal();
+  }
+});
+quoteForm.addEventListener("submit", handleQuoteCreateOrUpdate);
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !modal.classList.contains("is-hidden")) {
     closeModal();
+  }
+
+  if (event.key === "Escape" && !deleteModal.classList.contains("is-hidden")) {
+    closeDeleteModal();
   }
 });
 

@@ -3,10 +3,12 @@ const crypto = require("crypto");
 const path = require("path");
 const {
   createQuote,
+  deleteQuote,
   findUserByCredentials,
   getAllQuotes,
   getRandomQuote,
   isDatabaseAvailable,
+  updateQuote,
   userExists,
 } = require("./auth-db");
 
@@ -139,6 +141,48 @@ app.post("/api/quotes", requireApiAuth, (req, res) => {
 
   createQuote(quoteText, author);
   return res.status(201).json({ success: true });
+});
+
+app.put("/api/quotes/:id", requireApiAuth, (req, res) => {
+  const quoteId = Number(req.params.id);
+  const quoteText = req.body.quoteText?.trim();
+  const author = req.body.author?.trim();
+
+  if (!Number.isInteger(quoteId) || quoteId < 1) {
+    return res.status(400).json({ error: "Invalid quote id" });
+  }
+
+  if (!quoteText || !author) {
+    return res.status(400).json({ error: "Quote text and author are required" });
+  }
+
+  if (quoteText.length > 500 || author.length > 120) {
+    return res.status(400).json({ error: "Input is too long" });
+  }
+
+  const result = updateQuote(quoteId, quoteText, author);
+
+  if (result.changes === 0) {
+    return res.status(404).json({ error: "Quote not found" });
+  }
+
+  return res.json({ success: true });
+});
+
+app.delete("/api/quotes/:id", requireApiAuth, (req, res) => {
+  const quoteId = Number(req.params.id);
+
+  if (!Number.isInteger(quoteId) || quoteId < 1) {
+    return res.status(400).json({ error: "Invalid quote id" });
+  }
+
+  const result = deleteQuote(quoteId);
+
+  if (result.changes === 0) {
+    return res.status(404).json({ error: "Quote not found" });
+  }
+
+  return res.json({ success: true });
 });
 
 app.get("/api/random-quote", (req, res) => {

@@ -69,6 +69,7 @@
             </div>
 
             <form id="quote-form" class="modal-form">
+                <input id="quote-id-input" name="quoteId" type="hidden" />
                 <div class="field">
                     <label for="quote-text-input">Idezet</label>
                     <textarea id="quote-text-input" name="quoteText" rows="5" maxlength="500" required></textarea>
@@ -86,6 +87,25 @@
                     <button class="button button-secondary" type="button" id="cancel-quote-modal">Megse</button>
                 </div>
             </form>
+        </section>
+    </div>
+    <div id="delete-modal" class="modal-overlay is-hidden" aria-hidden="true">
+        <section class="modal-card modal-card-small" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+            <div class="modal-head">
+                <div>
+                    <h2 id="delete-modal-title">Idezet torlese</h2>
+                    <p id="delete-modal-description">Biztosan torolni szeretned ezt az idezetet?</p>
+                </div>
+                <button id="close-delete-modal" class="modal-close" type="button" aria-label="Ablak bezarasa">×</button>
+            </div>
+
+            <p id="delete-modal-quote-preview" class="delete-quote-preview"></p>
+            <p id="delete-form-message" class="form-message" aria-live="polite"></p>
+
+            <div class="modal-actions">
+                <button class="button button-delete" id="confirm-delete-button" type="button">Torles megerositese</button>
+                <button class="button button-secondary" id="cancel-delete-button" type="button">Megse</button>
+            </div>
         </section>
     </div>
     <script src="./js/dashboard.js"></script>

@@ -89,6 +89,30 @@ function createQuote(quoteText, author, options = {}) {
   `).run(quoteText, author);
 }
 
+function updateQuote(id, quoteText, author) {
+  const db = getDatabase();
+
+  if (!db) {
+    throw new Error("Database unavailable");
+  }
+
+  return db.prepare(`
+    UPDATE quotes
+    SET quote_text = ?, author = ?
+    WHERE id = ?
+  `).run(quoteText, author, id);
+}
+
+function deleteQuote(id) {
+  const db = getDatabase();
+
+  if (!db) {
+    throw new Error("Database unavailable");
+  }
+
+  return db.prepare("DELETE FROM quotes WHERE id = ?").run(id);
+}
+
 function findUserByCredentials(username, password) {
   const db = getDatabase();
 
@@ -148,9 +172,11 @@ function getRandomQuote() {
 module.exports = {
   createQuote,
   createUser,
+  deleteQuote,
   findUserByCredentials,
   getAllQuotes,
   getRandomQuote,
   isDatabaseAvailable,
+  updateQuote,
   userExists,
 };
