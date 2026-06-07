@@ -36,9 +36,9 @@ function setFormMessage(message, isSuccess = false) {
 function resetModalToCreateMode() {
   quoteForm.reset();
   quoteIdInput.value = "";
-  modalTitle.textContent = "Uj idezet feltoltese";
-  modalDescription.textContent = "Toltsd ki az idezet szoveget es a szerzo nevet, hogy az adatbazisba keruljon.";
-  submitQuoteButton.textContent = "Idezet mentese";
+  modalTitle.textContent = "Új idézet feltöltése";
+  modalDescription.textContent = "Töltsd ki az idézet szövegét és a szerző nevét, hogy az adatbázisba kerüljön.";
+  submitQuoteButton.textContent = "Idézet mentése";
   setFormMessage("");
 }
 
@@ -82,9 +82,9 @@ function openEditModal(quote) {
   quoteIdInput.value = String(quote.id);
   quoteTextInput.value = quote.quoteText;
   quoteAuthorInput.value = quote.author;
-  modalTitle.textContent = "Idezet szerkesztese";
-  modalDescription.textContent = "Itt tudod modositani a kivalasztott idezet szoveget es szerzojet.";
-  submitQuoteButton.textContent = "Modositas mentese";
+  modalTitle.textContent = "Idézet szerkesztése";
+  modalDescription.textContent = "Itt tudod módosítani a kiválasztott idézet szövegét és szerzőjét.";
+  submitQuoteButton.textContent = "Módosítás mentése";
   setFormMessage("");
   openModal();
 }
@@ -109,7 +109,7 @@ function createActionButtons(quote) {
   const editButton = document.createElement("button");
   editButton.type = "button";
   editButton.className = "button button-primary button-small";
-  editButton.textContent = "Szerkesztes";
+  editButton.textContent = "Szerkesztés";
   editButton.addEventListener("click", () => {
     openEditModal(quote);
   });
@@ -117,7 +117,7 @@ function createActionButtons(quote) {
   const deleteButton = document.createElement("button");
   deleteButton.type = "button";
   deleteButton.className = "button button-small button-delete";
-  deleteButton.textContent = "Torles";
+  deleteButton.textContent = "Törlés";
   deleteButton.addEventListener("click", () => {
     openDeleteModal(quote);
   });
@@ -130,7 +130,7 @@ function renderQuotes(quotes) {
   tableBody.innerHTML = "";
 
   if (quotes.length === 0) {
-    renderMessage("Meg nincs egyetlen idezet sem az adatbazisban.");
+    renderMessage("Még nincs egyetlen idézet sem az adatbázisban.");
     return;
   }
 
@@ -176,8 +176,8 @@ async function loadQuotes() {
   } catch (error) {
     const message =
       error.message === "Database unavailable"
-        ? "Adatbazis hiba miatt az idezetek jelenleg nem tolthetők be."
-        : "Nem sikerult betolteni az idezeteket az adatbazisbol.";
+        ? "Adatbázis hiba miatt az idézetek jelenleg nem tölthetők be."
+        : "Nem sikerült betölteni az idézeteket az adatbázisból.";
     renderMessage(message);
     console.error(error);
   }
@@ -192,13 +192,13 @@ async function handleQuoteCreateOrUpdate(event) {
   const quoteId = quoteIdInput.value;
 
   if (!quoteText || !author) {
-    setFormMessage("Az idezet es a szerzo mezot is ki kell tolteni.");
+    setFormMessage("Az idézet és a szerző mezőt is ki kell tölteni.");
     return;
   }
 
   const editing = isEditMode();
   submitQuoteButton.disabled = true;
-  setFormMessage(editing ? "Idezet modositasa folyamatban..." : "Idezet mentese folyamatban...");
+  setFormMessage(editing ? "Idézet módosítása folyamatban..." : "Idézet mentése folyamatban...");
 
   try {
     const response = await fetch(editing ? `/api/quotes/${quoteId}` : "/api/quotes", {
@@ -221,8 +221,8 @@ async function handleQuoteCreateOrUpdate(event) {
 
     setFormMessage(
       editing
-        ? "Az idezet modositasat elmentettuk."
-        : "Az uj idezet sikeresen bekerult az adatbazisba.",
+        ? "Az idézet módosítását elmentettük."
+        : "Az új idézet sikeresen bekerült az adatbázisba.",
       true,
     );
 
@@ -233,10 +233,10 @@ async function handleQuoteCreateOrUpdate(event) {
   } catch (error) {
     const message =
       error.message === "Database unavailable"
-        ? "Adatbazis hiba miatt most nem lehet menteni."
+        ? "Adatbázis hiba miatt most nem lehet menteni."
         : editing
-          ? "Nem sikerult modositani az idezetet."
-          : "Nem sikerult elmenteni az uj idezetet.";
+          ? "Nem sikerült módosítani az idézetet."
+          : "Nem sikerült elmenteni az új idézetet.";
     setFormMessage(message);
     console.error(error);
   } finally {
@@ -275,8 +275,8 @@ async function handleQuoteDelete() {
   } catch (error) {
     const message =
       error.message === "Database unavailable"
-        ? "Adatbazis hiba miatt most nem lehet torolni az idezetet."
-        : "Nem sikerult torolni az idezetet.";
+        ? "Adatbázis hiba miatt most nem lehet törölni az idézetet."
+        : "Nem sikerült törölni az idézetet.";
     deleteFormMessage.textContent = message;
     console.error(error);
   } finally {

@@ -22,7 +22,7 @@ async function loadRandomQuote() {
   }
 
   button.disabled = true;
-  button.textContent = "Toltodik...";
+  button.textContent = "Töltődik...";
 
   try {
     const response = await fetch("/api/random-quote", {
@@ -45,8 +45,8 @@ async function loadRandomQuote() {
   } catch (error) {
     const message =
       error.message === "Database unavailable"
-        ? "Az idezetek adatbazisa jelenleg nem elerheto."
-        : "Nem sikerult uj idezetet betolteni. Probald meg ujra.";
+        ? "Az idézetek adatbázisa jelenleg nem elérhető."
+        : "Nem sikerült új idézetet betölteni. Próbáld meg újra.";
     await updateQuoteText(message);
     console.error(error);
   } finally {

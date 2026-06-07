@@ -3,3 +3,6 @@ jegyzet.txt
 .DS_Store
 node_modules/
 data/*.sqlite
+.env
+.env.local
+logs/*.log

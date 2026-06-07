@@ -27,15 +27,15 @@
             </div>
 
             <div class="header-actions">
-                <button id="open-quote-modal" class="button button-primary" type="button">Uj idezet feltoltese</button>
-                <a class="button button-secondary" href="/logout">Kijelentkezes</a>
+                <button id="open-quote-modal" class="button button-primary" type="button">Új idézet feltöltése</button>
+                <a class="button button-secondary" href="/logout">Kijelentkezés</a>
             </div>
         </section>
 
         <section class="dashboard-card">
             <div class="card-head">
                 <div>
-                    <h2>Idézet Gyüjtemény</h2>
+                    <h2>Idézet Gyűjtemény</h2>
                 </div>
             </div>
 
@@ -43,15 +43,15 @@
                 <table class="dashboard-table">
                     <thead>
                         <tr>
-                            <th>Azonosito</th>
-                            <th>Idezet</th>
-                            <th>Szerzo</th>
-                            <th>Muveletek</th>
+                            <th>Azonosító</th>
+                            <th>Idézet</th>
+                            <th>Szerző</th>
+                            <th>Műveletek</th>
                         </tr>
                     </thead>
                     <tbody id="quotes-table-body">
                         <tr>
-                            <td colspan="4" class="table-message">Az idezetek betoltese folyamatban van...</td>
+                            <td colspan="4" class="table-message">Az idézetek betöltése folyamatban van...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -62,29 +62,29 @@
         <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title">
             <div class="modal-head">
                 <div>
-                    <h2 id="quote-modal-title">Uj idezet feltoltese</h2>
-                    <p>Toltsd ki az idezet szoveget es a szerzo nevet, hogy az adatbazisba keruljon.</p>
+                    <h2 id="quote-modal-title">Új idézet feltöltése</h2>
+                    <p>Töltsd ki az idézet szövegét és a szerző nevét, hogy az adatbázisba kerüljön.</p>
                 </div>
-                <button id="close-quote-modal" class="modal-close" type="button" aria-label="Ablak bezarasa">×</button>
+                <button id="close-quote-modal" class="modal-close" type="button" aria-label="Ablak bezárása">×</button>
             </div>
 
             <form id="quote-form" class="modal-form">
                 <input id="quote-id-input" name="quoteId" type="hidden" />
                 <div class="field">
-                    <label for="quote-text-input">Idezet</label>
+                    <label for="quote-text-input">Idézet</label>
                     <textarea id="quote-text-input" name="quoteText" rows="5" maxlength="500" required></textarea>
                 </div>
 
                 <div class="field">
-                    <label for="quote-author-input">Szerzo</label>
+                    <label for="quote-author-input">Szerző</label>
                     <input id="quote-author-input" name="author" type="text" maxlength="120" required />
                 </div>
 
                 <p id="quote-form-message" class="form-message" aria-live="polite"></p>
 
                 <div class="modal-actions">
-                    <button class="button button-primary" id="submit-quote-button" type="submit">Idezet mentese</button>
-                    <button class="button button-secondary" type="button" id="cancel-quote-modal">Megse</button>
+                    <button class="button button-primary" id="submit-quote-button" type="submit">Idézet mentése</button>
+                    <button class="button button-secondary" type="button" id="cancel-quote-modal">Mégse</button>
                 </div>
             </form>
         </section>
@@ -93,18 +93,18 @@
         <section class="modal-card modal-card-small" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
             <div class="modal-head">
                 <div>
-                    <h2 id="delete-modal-title">Idezet torlese</h2>
-                    <p id="delete-modal-description">Biztosan torolni szeretned ezt az idezetet?</p>
+                    <h2 id="delete-modal-title">Idézet törlése</h2>
+                    <p id="delete-modal-description">Biztosan törölni szeretnéd ezt az idézetet?</p>
                 </div>
-                <button id="close-delete-modal" class="modal-close" type="button" aria-label="Ablak bezarasa">×</button>
+                <button id="close-delete-modal" class="modal-close" type="button" aria-label="Ablak bezárása">×</button>
             </div>
 
             <p id="delete-modal-quote-preview" class="delete-quote-preview"></p>
             <p id="delete-form-message" class="form-message" aria-live="polite"></p>
 
             <div class="modal-actions">
-                <button class="button button-delete" id="confirm-delete-button" type="button">Torles megerositese</button>
-                <button class="button button-secondary" id="cancel-delete-button" type="button">Megse</button>
+                <button class="button button-delete" id="confirm-delete-button" type="button">Törlés megerősítése</button>
+                <button class="button button-secondary" id="cancel-delete-button" type="button">Mégse</button>
             </div>
         </section>
     </div>

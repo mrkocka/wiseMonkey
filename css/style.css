@@ -169,6 +169,35 @@ img {
   opacity: 0;
 }
 
+.page-under-construction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.construction-shell {
+  width: min(100%, 420px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  text-align: center;
+}
+
+.construction-monkey {
+  width: min(100%, 320px);
+  animation: float 2s infinite alternate-reverse ease-in-out;
+}
+
+.construction-label {
+  color: var(--text-light);
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .page-login {
   display: flex;
   align-items: center;
@@ -272,6 +301,12 @@ img {
   text-decoration: underline;
 }
 
+.login-help {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
 .login-error {
   display: none;
   color: var(--danger-text);
@@ -282,6 +317,10 @@ img {
 
 .login-error.is-visible {
   display: block;
+}
+
+.login-error.is-success {
+  color: #2d7a46;
 }
 
 .page-dashboard {
@@ -618,7 +657,7 @@ img {
     border-radius: 18px;
   }
 
-  .page-login .options {
+.page-login .options {
     flex-direction: column;
     align-items: flex-start;
   }

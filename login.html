@@ -21,11 +21,11 @@
                 <!-- Saját logóhoz cseréld le az src értékét -->
                 <!-- <img src="logo.png" alt="Logó"> -->
                 <div class="logo-fallback">
-                    <img src="/img/Logo.png" alt="majom logo">
+                    <img src="/img/Logo.png" alt="majom logó">
                 </div>
             </div>
 
-            <form action="/login" method="post">
+            <form action="/banan" method="post" id="login-form">
                 <div class="field">
                     <label for="username">Felhasználónév</label>
                     <input type="text" id="username" name="username" placeholder="Pl. admin" required>
@@ -42,7 +42,7 @@
                         <span>Emlékezzen rám</span>
                     </label>
 
-                    <a class="forgot" href="#">Elfelejtett jelszó?</a>
+                    <a class="forgot" href="/forgot-password">Elfelejtett jelszó?</a>
                 </div>
 
                 <p class="login-error" id="login-error">Hibás jelszó. Kérlek próbáld újra.</p>
@@ -52,16 +52,21 @@
 
         </div>
     </div>
+    <script src="/app-config.js"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const errorType = params.get("error");
         const errorBox = document.getElementById("login-error");
+        const loginForm = document.getElementById("login-form");
+        const loginRoute = window.WISE_MONKEY_CONFIG?.loginRoute || "/banan";
+
+        loginForm.action = loginRoute;
 
         if (errorType === "db") {
-            errorBox.textContent = "Adatbazis hiba miatt a belepes jelenleg nem elerheto.";
+            errorBox.textContent = "Adatbázis hiba miatt a belépés jelenleg nem elérhető.";
             errorBox.classList.add("is-visible");
         } else if (errorType) {
-            errorBox.textContent = "Hibas felhasznalonev vagy jelszo. Kerlek probald ujra.";
+            errorBox.textContent = "Hibás felhasználónév vagy jelszó. Kérlek próbáld újra.";
             errorBox.classList.add("is-visible");
         }
     </script>

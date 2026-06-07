@@ -1,22 +1,34 @@
-const { createUser, userExists } = require("./auth-db");
+require("dotenv").config({ override: true });
 
-const [, , username, password] = process.argv;
+const { createUser, emailExists, userExists } = require("./auth-db");
 
-if (!username || !password) {
-  console.error("Hasznalat: node create-user.js <felhasznalonev> <jelszo>");
-  console.error("Pelda: node create-user.js admin eros-jelszo");
+const [, , username, email, password] = process.argv;
+
+if (!username || !email || !password) {
+  console.error("Használat: node create-user.js <felhasználónév> <email> <jelszó>");
+  console.error("Példa: node create-user.js admin admin@domain.hu erős-jelszó");
   process.exit(1);
 }
 
 if (password.length < 8) {
-  console.error("A jelszo legyen legalabb 8 karakter hosszu.");
+  console.error("A jelszó legyen legalább 8 karakter hosszú.");
   process.exit(1);
 }
 
-if (userExists(username)) {
-  console.error(`A(z) "${username}" felhasznalo mar letezik.`);
-  process.exit(1);
-}
+(async () => {
+  if (await userExists(username)) {
+    console.error(`A(z) "${username}" felhasználó már létezik.`);
+    process.exit(1);
+  }
 
-createUser(username, password, { createIfMissing: true });
-console.log(`A(z) "${username}" felhasznalo letrejott az adatbazisban.`);
+  if (await emailExists(email)) {
+    console.error(`A(z) "${email}" e-mail cím már használatban van.`);
+    process.exit(1);
+  }
+
+  await createUser(username, email, password);
+  console.log(`A(z) "${username}" felhasználó létrejött az adatbázisban.`);
+})().catch((error) => {
+  console.error("A felhasználó létrehozása sikertelen:", error.message);
+  process.exit(1);
+});
