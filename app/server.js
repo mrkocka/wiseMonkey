@@ -1,9 +1,9 @@
-require("dotenv").config({ override: true });
-
 const express = require("express");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+
+require("dotenv").config({ path: path.join(__dirname, ".env"), override: true });
 const {
   consumePasswordResetToken,
   createPasswordResetToken,
@@ -24,13 +24,13 @@ const { sendPasswordResetEmail } = require("./mailer");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || "127.0.0.1";
-const publicDir = __dirname;
+const publicDir = path.join(__dirname, "..", "public");
 const sessionSecret = process.env.SESSION_SECRET || "wise-monkey-dev-secret";
 const authCookieName = "wise_monkey_auth";
 const resetTokenExpiresMinutes = Number(process.env.RESET_TOKEN_EXPIRES_MINUTES || 30);
 const appBaseUrl = process.env.APP_BASE_URL || `http://${HOST}:${PORT}`;
 const loginRoute = normalizeRoute(process.env.LOGIN_ROUTE || "/banan");
-const loginFailureLogPath = process.env.LOGIN_FAILURE_LOG || path.join(publicDir, "logs", "login-failures.log");
+const loginFailureLogPath = process.env.LOGIN_FAILURE_LOG || path.join(__dirname, "logs", "login-failures.log");
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());

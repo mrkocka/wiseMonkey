@@ -1,0 +1,184 @@
+MariaDB biztonsági beállítások magyarázata
+==========================================
+
+Indítás:
+
+sudo mariadb-secure-installation
+
+Ez a segédprogram a MariaDB alapvető biztonsági beállításain vezet végig.
+A kérdések sorrendje és szövege MariaDB-verziónként kissé eltérhet.
+
+
+
+1. Enter current password for root (enter for none):
+---------------------------------------------------
+
+Magyarul:
+Add meg a MariaDB root felhasználójának jelenlegi jelszavát.
+Ha nincs jelszó, nyomj Entert.
+
+Javasolt válasz új telepítésnél:
+Enter, vagyis hagyd üresen.
+
+Miért?
+Ubuntu és Debian alatt az új MariaDB-telepítés rendszerint unix_socket
+hitelesítést használ. Ilyenkor az operációs rendszer root felhasználója a
+sudo parancson keresztül, külön MariaDB root jelszó nélkül léphet be.
+
+Ha az üres válaszra Access denied hiba érkezik, ne próbálgass jelszavakat.
+Ez azt jelentheti, hogy a MariaDB-t korábban már beállították.
+
+
+2. Switch to unix_socket authentication? [Y/n]
+------------------------------------------------
+
+Magyarul:
+Átváltson unix_socket alapú hitelesítésre?
+
+Javasolt válasz:
+Y
+
+Miért?
+Az unix_socket hitelesítés összekapcsolja a MariaDB adminisztrátori
+hozzáférését a Linux root jogosultságával. Így csak az tud MariaDB rootként
+belépni, aki a szerveren sudo/root jogosultsággal rendelkezik.
+
+Ez megakadályozza, hogy a MariaDB root fiókját távolról, jelszópróbálgatással
+támadják. Adminisztrátorként később ezzel lehet belépni:
+
+sudo mariadb
+
+Ha a program azt írja, hogy az unix_socket hitelesítés már aktív, nincs
+további teendő ennél a pontnál.
+
+
+3. Change the root password? [Y/n]
+   vagy: Set root password? [Y/n]
+----------------------------------
+
+Magyarul:
+Megváltoztassuk vagy beállítsuk a MariaDB root jelszavát?
+
+Javasolt válasz:
+N
+
+Miért?
+Az előző pontban megtartott unix_socket hitelesítés mellett nincs szükség
+külön MariaDB root jelszóra. Az adminisztrátori hozzáférést a sudo jogosultság
+védi. Ezzel elkerülhető egy további nagy jogosultságú jelszó tárolása,
+elvesztése vagy véletlen kiszivárgása.
+
+Az alkalmazás nem rootként fog csatlakozni. Külön, korlátozott jogosultságú
+adatbázis-felhasználót készítünk majd számára saját jelszóval.
+
+
+4. Remove anonymous users? [Y/n]
+--------------------------------
+
+Magyarul:
+Törölje a névtelen adatbázis-felhasználókat?
+
+Javasolt válasz:
+Y
+
+Miért?
+A névtelen fiókok felhasználónév nélkül is lehetővé tehetnek adatbázis-
+kapcsolatot. Ezek legfeljebb helyi teszteléshez hasznosak, éles VPS-en viszont
+felesleges támadási felületet jelentenek.
+
+Az alkalmazás saját, névvel és jelszóval védett fiókot fog használni, ezért
+névtelen felhasználóra nincs szüksége.
+
+
+5. Disallow root login remotely? [Y/n]
+--------------------------------------
+
+Magyarul:
+Tiltsa meg a MariaDB root felhasználó távoli bejelentkezését?
+
+Javasolt válasz:
+Y
+
+Miért?
+A root a MariaDB legnagyobb jogosultságú fiókja. Ha távolról is elérhető
+lenne, egy megszerzett vagy kitalált hitelesítési adat az összes adatbázist
+veszélyeztetné.
+
+A Wise Monkey alkalmazás ugyanazon a VPS-en fut, mint a MariaDB, ezért nincs
+szüksége távoli root belépésre. Az adminisztráció SSH-n keresztül, helyben a
+sudo mariadb paranccsal végezhető.
+
+A MariaDB 3306-os portját sem szükséges megnyitni az internet felé.
+
+
+6. Remove test database and access to it? [Y/n]
+------------------------------------------------
+
+Magyarul:
+Törölje a tesztadatbázist és az ahhoz tartozó hozzáféréseket?
+
+Javasolt válasz:
+Y
+
+Miért?
+A test nevű adatbázis csak kipróbálási célra szolgál. Éles szerveren nincs rá
+szükség, és bizonyos alapbeállítások mellett a kelleténél szélesebb körben
+lehet elérhető. A törlése csökkenti a felesleges támadási felületet.
+
+Ez nem törli a Wise Monkey adatbázisát vagy a később importált dumpot.
+
+
+7. Reload privilege tables now? [Y/n]
+-------------------------------------
+
+Magyarul:
+Töltse újra most a jogosultsági táblákat?
+
+Javasolt válasz:
+Y
+
+Miért?
+A MariaDB a felhasználókat és jogosultságokat belső rendszer-táblákban
+kezeli. Az újratöltés azonnal érvényesíti az előző lépésekben elvégzett
+változtatásokat, így nem szükséges újraindítani az adatbázis-szervert.
+
+
+Ajánlott válaszok röviden
+=========================
+
+Current root password:              Enter
+Switch to unix_socket authentication: Y
+Change vagy set root password:      N
+Remove anonymous users:             Y
+Disallow root login remotely:       Y
+Remove test database:               Y
+Reload privilege tables:            Y
+
+
+Ellenőrzés a beállítás után
+===========================
+
+Az adminisztrátori belépés ellenőrzése:
+
+sudo mariadb
+
+Ha megjelenik a MariaDB parancssora, a kilépéshez ezt kell beírni:
+
+exit
+
+A szolgáltatás állapotának ellenőrzése:
+
+sudo systemctl status mariadb
+
+Az elvárt állapot:
+
+active (running)
+
+
+Fontos megjegyzés
+=================
+
+A Wise Monkey alkalmazást nem szabad a MariaDB root felhasználójával
+csatlakoztatni. A dump importálása után külön wise_monkey_app felhasználót
+hozunk létre, amely csak a wise_monkey adatbázishoz és csak a működéshez
+szükséges műveletekhez kap jogosultságot.

@@ -97,12 +97,13 @@ print_next_steps() {
   log "Következő lépések"
   cat <<EOF
 1. Klónozd vagy másold fel a projektet a szerverre.
-2. Hozd létre és töltsd ki a .env fájlt.
-3. Futtasd: npm install
-4. Indítsd az alkalmazást: pm2 start server.js --name wise-monkey
-5. Mentsd a PM2 állapotot: pm2 save
-6. Készíts nginx reverse proxy konfigurációt a Node alkalmazás elé.
-7. Aktiváld a HTTPS-t: certbot --nginx
+2. Lépj be az app mappába: cd app
+3. Hozd létre és töltsd ki a .env fájlt.
+4. Futtasd: npm install
+5. Indítsd az alkalmazást: pm2 start server.js --name wise-monkey
+6. Mentsd a PM2 állapotot: pm2 save
+7. Készíts nginx reverse proxy konfigurációt a Node alkalmazás elé.
+8. Aktiváld a HTTPS-t: certbot --nginx
 
 Hasznos kapcsolók:
 - MariaDB kihagyása: INSTALL_MARIADB=false bash scripts/setup-ubuntu-server.sh
